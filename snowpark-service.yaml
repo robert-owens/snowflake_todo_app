@@ -1,0 +1,22 @@
+spec:
+  containers:
+  - name: todo-app
+    image: /mdp_pharmacy_ws_prod/dev/todo_app_repo/todo-app:latest
+    env:
+      SNOWFLAKE_ACCOUNT: advocate-mdp
+      SNOWFLAKE_USER: ROBERT.L.OWENS@ADVOCATEHEALTH.ORG
+      SNOWFLAKE_DATABASE: MDP_PHARMACY_WS_PROD
+      SNOWFLAKE_SCHEMA: DEV
+      SNOWFLAKE_WAREHOUSE: MDP_PHARMACY_WH
+      PORT: "8080"
+    resources:
+      requests:
+        memory: 128Mi
+        cpu: 0.5
+      limits:
+        memory: 256Mi
+        cpu: 1.0
+  endpoints:
+  - name: todo-app-endpoint
+    port: 8080
+    public: true

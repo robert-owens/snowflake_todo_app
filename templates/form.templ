@@ -1,0 +1,17 @@
+package templates
+
+templ AddTodoForm() {
+    <div id="add-form" class="form-container" style="display: none;">
+        <h2>Add New Todo</h2>
+        <form hx-post="/api/data" hx-target="#data-table" hx-swap="outerHTML" hx-on::after-request="this.reset(); document.getElementById('add-form').style.display='none';">
+            <div class="form-group">
+                <label for="task">Task:</label>
+                <input type="text" id="task" name="task" required placeholder="Enter your todo item" autofocus/>
+            </div>
+            <div class="form-buttons">
+                <button type="submit" class="btn-submit">Add Todo</button>
+                <button type="button" class="btn-cancel" onclick="document.getElementById('add-form').style.display='none'; this.form.reset();">Cancel</button>
+            </div>
+        </form>
+    </div>
+}

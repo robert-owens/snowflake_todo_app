@@ -1,0 +1,101 @@
+package templates
+
+import "github.com/robert-owens/snowflake-hypermedia-app/internal/models"
+
+templ Index(data []models.DataRow) {
+    @Base("Todo App - Snowflake") {
+        <div class="header">
+            <h1>Todo Items</h1>
+            <div class="header-buttons">
+                <button
+                    class="btn-add"
+                    onclick="document.getElementById('add-form').style.display = document.getElementById('add-form').style.display === 'none' ? 'block' : 'none'">
+                    Add New Todo
+                </button>
+                <button
+                    class="btn-refresh"
+                    hx-get="/api/refresh"
+                    hx-target="#data-table"
+                    hx-swap="outerHTML"
+                    hx-indicator="#spinner">
+                    Refresh
+                </button>
+                <span id="spinner" class="htmx-indicator">Loading...</span>
+            </div>
+        </div>
+        @AddTodoForm()
+        @DataTable(data)
+    }
+}
+
+templ DataTable(data []models.DataRow) {
+    <div id="data-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Task</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                if len(data) == 0 {
+                    <tr>
+                        <td colspan="3" style="text-align: center;">No todos yet. Click "Add New Todo" to get started!</td>
+                    </tr>
+                } else {
+                    for _, row := range data {
+                        <tr class={templ.KV("completed", row.Done)} id={"row-" + row.ID}>
+                            <td>{row.ID}</td>
+                            <td>
+                                <div id={"task-display-" + row.ID} class="task-display">
+                                    <span class={templ.KV("task-text", true), templ.KV("completed", row.Done)}>
+                                        {row.Task}
+                                    </span>
+                                </div>
+                                <div id={"task-edit-" + row.ID} class="task-edit" style="display: none;">
+                                    <form hx-put={"/api/data/" + row.ID} hx-target="#data-table" hx-swap="outerHTML">
+                                        <input type="text" name="task" value={row.Task} class="edit-input" required/>
+                                        <input type="hidden" name="done" value={templ.Bool(row.Done)}/>
+                                        <button type="submit" class="btn-save" title="Save changes">💾</button>
+                                        <button type="button" class="btn-cancel-edit" title="Cancel edit" data-id={row.ID}>❌</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button
+                                        hx-patch={"/api/data/" + row.ID + "/toggle"}
+                                        hx-target="#data-table"
+                                        hx-swap="outerHTML"
+                                        class={templ.KV("btn-toggle", true), templ.KV("done", row.Done)}
+                                        title="Toggle completion status">
+                                        if row.Done {
+                                            ✅
+                                        } else {
+                                            ⭕
+                                        }
+                                    </button>
+                                    <button
+                                        class="btn-edit"
+                                        title="Edit task"
+                                        data-id={row.ID}>
+                                        ✏️
+                                    </button>
+                                    <button
+                                        hx-delete={"/api/data/" + row.ID}
+                                        hx-target="closest tr"
+                                        hx-swap="outerHTML swap:1s"
+                                        class="btn-delete"
+                                        title="Delete todo">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}

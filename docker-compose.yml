@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  todo-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SNOWFLAKE_ACCOUNT=advocate-mdp
+      - SNOWFLAKE_USER=ROBERT.L.OWENS@ADVOCATEHEALTH.ORG
+      - SNOWFLAKE_DATABASE=MDP_PHARMACY_WS_PROD
+      - SNOWFLAKE_SCHEMA=DEV
+      - SNOWFLAKE_WAREHOUSE=MDP_PHARMACY_WH
+      - SNOWFLAKE_AUTHENTICATOR=externalbrowser
+      - PORT=8080
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

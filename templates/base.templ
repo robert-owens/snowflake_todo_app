@@ -1,0 +1,49 @@
+package templates
+
+templ Base(title string) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{title}</title>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <!-- OR for Datastar: -->
+        <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@sudodevnull/datastar"></script> -->
+        <link rel="stylesheet" href="/static/css/style.css"/>
+    </head>
+    <body>
+        <div class="container">
+            {children...}
+        </div>
+        <script>
+            function toggleEdit(id) {
+                const display = document.getElementById('task-display-' + id);
+                const edit = document.getElementById('task-edit-' + id);
+                
+                if (display.style.display === 'none') {
+                    // Cancel edit - show display, hide edit
+                    display.style.display = 'block';
+                    edit.style.display = 'none';
+                } else {
+                    // Start edit - hide display, show edit
+                    display.style.display = 'none';
+                    edit.style.display = 'block';
+                    // Focus on the input field
+                    edit.querySelector('input[name="task"]').focus();
+                }
+            }
+
+            // Event delegation for edit and cancel buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-edit') || e.target.classList.contains('btn-cancel-edit')) {
+                    const id = e.target.getAttribute('data-id');
+                    if (id) {
+                        toggleEdit(id);
+                    }
+                }
+            });
+        </script>
+    </body>
+    </html>
+}
