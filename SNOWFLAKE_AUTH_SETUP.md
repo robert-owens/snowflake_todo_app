@@ -1,5 +1,5 @@
 # Snowflake Authentication Setup
-
+j
 This guide explains how to set up authentication for both local development and Snowpark Container deployment.
 
 ## Authentication Methods (Priority Order)
